@@ -1,4 +1,6 @@
- <!DOCTYPE html>
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -118,8 +120,13 @@
                 return;
             }
 
-            fetch(`/generate?link=${encodeURIComponent(link)}`)
-                .then(response => response.blob())
+            fetch(`${window.location.origin}/generate?link=${encodeURIComponent(link)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to generate QR code');
+                    }
+                    return response.blob();
+                })
                 .then(blob => {
                     const qrCodeDiv = document.getElementById('qrCode');
                     qrCodeDiv.innerHTML = '';
@@ -137,7 +144,10 @@
                         link.click();
                     };
                 })
-                .catch(err => console.error('Error generating QR code:', err));
+                .catch(err => {
+                    console.error('Error generating QR code:', err);
+                    alert('Failed to generate QR code. Please try again.');
+                });
         });
     </script>
 </body>
